@@ -2,7 +2,10 @@ package annotation;
 
 import com.sun.mirror.apt.AnnotationProcessor;
 import com.sun.mirror.apt.AnnotationProcessorEnvironment;
-import com.sun.mirror.declaration.*;
+import com.sun.mirror.declaration.MethodDeclaration;
+import com.sun.mirror.declaration.Modifier;
+import com.sun.mirror.declaration.ParameterDeclaration;
+import com.sun.mirror.declaration.TypeDeclaration;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,7 +22,7 @@ public class InterfaceExtractorProcessor implements AnnotationProcessor {
     /** 私有的静态变量，唯一的赋值方式就是在构造其中进行赋值*/
     private final AnnotationProcessorEnvironment env;
 
-    private final List<MethodDeclaration>  interfaceMethods = new ArrayList<>();
+    private final List<MethodDeclaration> interfaceMethods = new ArrayList<>();
 
     public InterfaceExtractorProcessor(AnnotationProcessorEnvironment env) {
         this.env = env;
@@ -48,9 +51,10 @@ public class InterfaceExtractorProcessor implements AnnotationProcessor {
                     PrintWriter sourceFileWriter = env.getFiler().createSourceFile(interfaceName);
                     sourceFileWriter.println("package " + typeDeclaration.getPackage().getQualifiedName() + ";");
                     // 如果返回值不是基本数据类型 是否需要import
-                    sourceFileWriter.println(Modifier.PUBLIC.toString() + interfaceName +" {");
+                    sourceFileWriter.println(Modifier.PUBLIC.toString() + " interface " +interfaceName +" {");
                     for (MethodDeclaration interfaceMethod : interfaceMethods) {
                         // 接口中的方法默认的修饰符是 public abstract 所以将这两个修饰符去掉
+                        sourceFileWriter.print("\t");
                         for (Modifier modifier : interfaceMethod.getModifiers()) {
                             if(modifier.toString().equals(Modifier.PUBLIC.toString())
                                     || modifier.toString().equals(Modifier.ABSTRACT.toString()) ){
@@ -65,7 +69,7 @@ public class InterfaceExtractorProcessor implements AnnotationProcessor {
                             if(++countParam < interfaceMethod.getParameters().size()){
                                 sourceFileWriter.print(", ");
                             }else {
-                                sourceFileWriter.print(");");
+                                sourceFileWriter.println(");");
                             }
                         }
                         sourceFileWriter.print("}");

@@ -11,7 +11,8 @@ import java.util.Set;
 
 /**
  * 注解处理器工厂
- *
+ *  Exec cmd {apt -factory annotation.InterfaceExtractorProcessorFactory -cp ..\..\target\production\TIJ-
+ * 4-RESET -s ./apt Multiplier.java}
  * @author fuzifeng
  * created at 2019-08-27
  */

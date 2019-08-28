@@ -49,12 +49,12 @@ public class TableCreator {
             List<String> columnList = new ArrayList<>();
             for (Field declaredField : cl.getDeclaredFields()) {
                 String columnName = null;
-                Annotation[] anns = declaredField.getDeclaredAnnotations();
-                if(anns.length < 1){
+                Annotation[] annotations = declaredField.getDeclaredAnnotations();
+                if(annotations.length < 1){
                     continue;
                 }
-                if(anns[0] instanceof SQLString){
-                    SQLString sqlString = (SQLString) anns[0];
+                if(annotations[0] instanceof SQLString){
+                    SQLString sqlString = (SQLString) annotations[0];
                     if(sqlString.name().length() > 1){
                         columnName = sqlString.name();
                     }else{
@@ -62,8 +62,8 @@ public class TableCreator {
                     }
                     columnList.add(columnName + " VARCHAR (" + sqlString.value() + ") " + getConstraints(sqlString.constraints()));
                 }
-                if(anns[0] instanceof SQLInteger){
-                    SQLInteger sqlInteger = (SQLInteger) anns[0];
+                if(annotations[0] instanceof SQLInteger){
+                    SQLInteger sqlInteger = (SQLInteger) annotations[0];
                     if(sqlInteger.name().length() > 1){
                         columnName = sqlInteger.name();
                     }else{
