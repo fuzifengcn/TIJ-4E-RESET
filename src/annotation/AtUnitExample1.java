@@ -2,7 +2,9 @@ package annotation;
 
 import net.mindview.atunit.Test;
 import net.mindview.util.OSExecute;
-
+/**
+ * @author fuzifeng
+ */
 public class AtUnitExample1 {
 
     public String methodOne() {
@@ -40,7 +42,7 @@ public class AtUnitExample1 {
     }
 
     public static void main(String[] args) {
-        OSExecute.command("cd target\\production\\TIJ-4-RESET && java net.mindview.atunit.AtUnit  annotation\\AtUnitExample1");
+        OSExecute.command("cd target\\production\\TIJ-4E-RESET && java net.mindview.atunit.AtUnit  annotation\\AtUnitExample1");
     }
 
 }

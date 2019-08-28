@@ -14,7 +14,8 @@ public class ClassNameFinder {
         Map<Integer, String> classNameTable = new HashMap<Integer, String>();
         try {
             DataInputStream data = new DataInputStream(new ByteArrayInputStream(classBytes));
-            int magic = data.readInt();  // 0xcafebabe
+            // 0xcafebabe
+            int magic = data.readInt();
             int minorVersion = data.readShort();
             int majorVersion = data.readShort();
             int constant_pool_count = data.readShort();
@@ -23,29 +24,38 @@ public class ClassNameFinder {
                 int tag = data.read();
                 int tableSize;
                 switch (tag) {
-                    case 1: // UTF
+                    // UTF
+                    case 1:
                         int length = data.readShort();
                         char[] bytes = new char[length];
-                        for (int k = 0; k < bytes.length; k++)
+                        for (int k = 0; k < bytes.length; k++) {
                             bytes[k] = (char) data.read();
+                        }
                         String className = new String(bytes);
                         classNameTable.put(i, className);
                         break;
-                    case 5: // LONG
-                    case 6: // DOUBLE
+                    // LONG
+                    case 5:
+                        // DOUBLE
+                    case 6:
                         data.readLong(); // discard 8 bytes
                         i++; // Special skip necessary
                         break;
-                    case 7: // CLASS
+                    // CLASS
+                    case 7:
                         int offset = data.readShort();
                         offsetTable.put(i, offset);
                         break;
-                    case 8: // STRING
+                    // STRING
+                    case 8:
                         data.readShort(); // discard 2 bytes
                         break;
-                    case 3:  // INTEGER
-                    case 4:  // FLOAT
-                    case 9:  // FIELD_REF
+                    // INTEGER
+                    case 3:
+                    // FLOAT
+                    case 4:
+                        // FIELD_REF
+                    case 9:
                     case 10: // METHOD_REF
                     case 11: // INTERFACE_METHOD_REF
                     case 12: // NAME_AND_TYPE
@@ -68,11 +78,14 @@ public class ClassNameFinder {
     // Demonstration:
     public static void main(String[] args) throws Exception {
         if (args.length > 0) {
-            for (String arg : args)
+            for (String arg : args) {
                 print(thisClass(BinaryFile.read(new File(arg))));
-        } else
+            }
+        } else {
             // Walk the entire tree:
-            for (File klass : Directory.walk(".", ".*\\.class"))
+            for (File klass : Directory.walk(".", ".*\\.class")) {
                 print(thisClass(BinaryFile.read(klass)));
+            }
+        }
     }
 } ///:~
