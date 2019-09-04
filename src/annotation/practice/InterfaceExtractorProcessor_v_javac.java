@@ -11,10 +11,15 @@ import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
 import javax.lang.model.util.ElementFilter;
+import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -37,21 +42,42 @@ public class InterfaceExtractorProcessor_v_javac extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
         Set<? extends Element> elementsAnnotatedWith = roundEnv.getElementsAnnotatedWith(ExtractInterface.class);
+
         for (Element element : elementsAnnotatedWith) {
-
-            ExtractInterface annotation = element.getAnnotation(ExtractInterface.class);
-            Set<Modifier> modifiers = element.getModifiers();
-            for (Modifier modifier : modifiers) {
-                Class<Modifier> declaringClass = modifier.getDeclaringClass();
-                Method[] declaredMethods = declaringClass.getDeclaredMethods();
+            if(element.getKind() == ElementKind.CLASS ){
+                List<Method> interfaceMethods = new ArrayList<>();
+                ExtractInterface annotation = element.getAnnotation(ExtractInterface.class);
+                Class<? extends Element> aClass = element.getClass();
+                Method[] declaredMethods = aClass.getDeclaredMethods();
                 for (Method declaredMethod : declaredMethods) {
-                    if (Modifier.PUBLIC.equals(declaredMethod.getModifiers())){
-
+                    if(Modifier.isPublic(declaredMethod.getModifiers())
+                            && !Modifier.isStatic(declaredMethod.getModifiers())){
+                        interfaceMethods.add(declaredMethod);
                     }
                 }
-            }
+                if(interfaceMethods.size() > 0){
+                    String interfaceName = annotation.value();
+                    for (Method interfaceMethod : interfaceMethods) {
+                        try {
+                            JavaFileObject sourceFile = processingEnv.getFiler()
+                                    .createSourceFile(interfaceName, element.getEnclosingElement());
 
+//                            writer.append(Modifier.toString(interfaceMethod.getModifiers())).append(" ")
+//                                    .append(interfaceMethod.getGenericReturnType().toString()).append("(");
+//
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+
+            }
         }
+
+
+
 
         return false;
     }
